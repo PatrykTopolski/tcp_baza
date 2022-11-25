@@ -23,18 +23,51 @@ public class Client {
         BufferedWriter bw = new BufferedWriter(osw);
         BufferedReader br = new BufferedReader(isr);
         log("Streams collected");
-        String outputLine = "3243423423423";
+
+        // sending first line
+        String handshake = "3243423423423";
         log("Writting data to socket");
-        bw.write(outputLine);
+        bw.write(handshake);
         bw.newLine();
         bw.flush();
         log("Reading data from socket");
         String inputLine = br.readLine();
         log("Data from socket: " + inputLine);
-        String outputNext = prepareOutputLog(inputLine);
-        bw.write(outputNext);
+
+        // sending second line
+        String outputNext = prepareOutputLog(inputLine.split(",")[1]);
+        bw.write(handshake+","+outputNext);
         bw.newLine();
         bw.flush();
+        log("Reading data from socket");
+
+        String inputLine3 = br.readLine();
+        log("Data from socket: " + inputLine3);
+        outputNext = prepareOutputReplace(inputLine3.split(",")[1]);
+        System.out.println(outputNext);
+        bw.write(handshake+","+outputNext);
+        bw.newLine();
+        bw.flush();
+        int[] ints = new int[6];
+        for (int i = 0; i < 6; i++) {
+            bw.write(handshake + ","+ i);
+            bw.newLine();
+            bw.flush();
+            ints[i] = Integer.parseInt(br.readLine().split(",")[1]);
+            System.out.println(Arrays.toString(ints));
+        }
+        bw.write(String.valueOf(
+                        Arrays.stream(ints)
+                                .reduce(Integer::sum)
+                                .getAsInt())
+                );
+        bw.newLine();
+        bw.flush();
+        System.out.println(br.readLine());
+        bw.write("");
+        bw.newLine();
+        bw.flush();
+        log("received: " + br.readLine());
         log("Client socket closing");
         clientSocket.close();
         log("Client socket closed");
@@ -51,10 +84,11 @@ public class Client {
 
     private static String prepareOutputReplace(String inputLine){
         char[] characters = inputLine.toCharArray();
-        for (int i = 0; i < characters.length; i++) {
-            characters[i] = characters[i] == '3' ? '4' : characters[i];
+        StringBuilder builder = new StringBuilder();
+        for (char character : characters) {
+            builder.append(character == '3' ? '4' : character);
         }
-       return Arrays.toString(characters);
+       return builder.toString();
     }
 
     public static void log(String message) {

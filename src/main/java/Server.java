@@ -4,6 +4,7 @@ import java.net.Socket;
 
 public class Server {
     public static int PORT = 8089;
+    private static final String HANDSHAKE = "3243423423423";
     public static void main(String[] args) throws IOException {
         log("Startig");
         log("Server socket opening");
@@ -25,21 +26,31 @@ public class Server {
         String inputLine = br.readLine();
         log("Data from socket: " + inputLine);
         // if flag is corre
-        if (inputLine.equals("3243423423423")){
-            String outputLine = String.valueOf(16);
-            log("Writting data to socket: " + outputLine);
-            bw.write(outputLine);
-            bw.newLine();
-            bw.flush();
-            String outputCalculatored = br.readLine();
-            log("New data from socket: " + outputCalculatored);
-        }else {
-            String outputLine = "kurwa student debil";
-            log("Writting data to socket");
-            bw.write(outputLine);
-            bw.newLine();
-            bw.flush();
+        if (inputLine.equals(HANDSHAKE)){
+            while(inputLine.equals(HANDSHAKE)) {
+                String outputLine = HANDSHAKE + "," + (int) (Math.random() * 10);
+                log("Writting data to socket: " + outputLine);
+                bw.write(outputLine);
+                bw.newLine();
+                bw.flush();
+                inputLine = br.readLine();
+                log("received data : " + inputLine);
+                if(inputLine == null || inputLine.isEmpty()) break;
+                String[] split = inputLine.split(",");
+                if (HANDSHAKE.equals(split[0])) {
+                    if(split.length == 1){
+                        log("Valid connection but no data received: ");
+                    }else {
+                        inputLine = HANDSHAKE;
+                    }
+                }
+            }
         }
+        String outputLine = "Koniec komunikacji";
+        log("Writting data to socket");
+        bw.write(outputLine);
+        bw.newLine();
+        bw.flush();
         log("Client socket closing");
         clientSocket.close();
         log("Client socket closed");
