@@ -56,8 +56,7 @@ public class Client {
             ints[i] = Integer.parseInt(br.readLine().split(",")[1]);
             System.out.println(Arrays.toString(ints));
         }
-        bw.write(String.valueOf(
-                        Arrays.stream(ints)
+        bw.write(String.valueOf(Arrays.stream(ints)
                                 .reduce(Integer::sum)
                                 .getAsInt())
                 );
