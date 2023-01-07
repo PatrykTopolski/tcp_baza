@@ -63,12 +63,6 @@ public class ClientUdpTcp {
         socket.close();
         log("Ending");
 
-
-
-//
-//        // create buffer for incoming packets
-//        byte[] buffer = new byte[1024];
-//        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
     }
 
     public static String concatenate(String str1, String str2) {
